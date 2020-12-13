@@ -23,6 +23,21 @@ const CalendarModal = () => {
   // const [isOpen, setIsOpen] = useState(true);
   const [dateStart, setDateStart] = useState(now.toDate());
   const [dateEnd, setDateEnd] = useState(end.toDate());
+  const [formValues, setFormValues] = useState({
+    title: '',
+    notes: '',
+    start: now.toDate(),
+    end: end.toDate(),
+  });
+
+  const { title, notes } = formValues;
+
+  const handleInputChange = ({ target }) => {
+    setFormValues({
+      ...formValues,
+      [target.name]: target.value,
+    });
+  };
 
   const closeModal = () => {
     console.log('modal cerrado');
@@ -31,10 +46,23 @@ const CalendarModal = () => {
 
   const startDateChange = (e) => {
     setDateStart(e);
+    setFormValues({
+      ...formValues,
+      start: e,
+    });
   };
 
   const endDateChange = (e) => {
     setDateEnd(e);
+    setFormValues({
+      ...formValues,
+      end: e,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formValues);
   };
 
   return (
@@ -47,9 +75,9 @@ const CalendarModal = () => {
       className="modal"
       overlayClassName="modal-fondo"
     >
-      <h1> Nuevo evento </h1>
+      <h1>Nuevo evento</h1>
       <hr />
-      <form className="container">
+      <form onSubmit={handleSubmit} className="container">
         <div className="form-group">
           <label>Fecha y hora de inicio</label>
           <DateTimePicker
@@ -71,8 +99,10 @@ const CalendarModal = () => {
 
         <hr />
         <div className="form-group">
-          <label>Titulo y notas</label>
+          <label>Título y notas</label>
           <input
+            value={title}
+            onChange={handleInputChange}
             type="text"
             className="form-control"
             placeholder="Título del evento"
@@ -86,6 +116,8 @@ const CalendarModal = () => {
 
         <div className="form-group">
           <textarea
+            values={notes}
+            onChange={handleInputChange}
             type="text"
             className="form-control"
             placeholder="Notas"

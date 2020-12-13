@@ -1,11 +1,13 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
-
 import 'moment/locale/es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { messages } from '../helpers/calendar-messages-es';
+import { uiOpenModal } from '../../actions/ui';
 import Navbar from '../ui/Navbar';
 import CalendarEvent from './CalendarEvent';
 import CalendarModal from './CalendarModal';
@@ -28,14 +30,15 @@ const events = [
 ];
 
 const CalendarScreen = () => {
+  const dispatch = useDispatch();
+
   // Recuperando la última vista visitada, si no existe muestra el mes por defecto
   const [lastView, setLastView] = useState(
     localStorage.getItem('lastView') || 'month'
   );
 
-  const onDoubleClickEvent = (e) => {
-    console.log(e);
-  };
+  // Abrir el modal con doble click
+  const onDoubleClickEvent = (e) => dispatch(uiOpenModal());
 
   const onSelectEvent = (e) => {
     console.log(e);

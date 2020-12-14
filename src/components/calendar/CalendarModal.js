@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Modal from 'react-modal';
@@ -7,6 +7,11 @@ import moment from 'moment';
 import Swal from 'sweetalert2';
 
 import { uiCloseModal } from '../../actions/ui';
+import {
+  eventAddNew,
+  eventClearActive,
+  eventUpdated,
+} from '../../actions/events';
 
 const customStyles = {
   content: {
@@ -24,21 +29,35 @@ Modal.setAppElement('#root');
 const nowDate = moment().minutes(0).seconds(0).add(1, 'hours');
 const endDate = nowDate.clone().add(1, 'hours');
 
+// Se especifíca afuera del componente para que no se ejecute
+// cada vez que el componente es nuevamente renderizado
+const initEvent = {
+  title: '',
+  notes: '',
+  start: nowDate.toDate(),
+  end: endDate.toDate(),
+};
+
 const CalendarModal = () => {
   const dispatch = useDispatch();
   const { modalOpen } = useSelector((state) => state.ui);
+  const { activeEvent } = useSelector((state) => state.calendar);
 
   const [dateStart, setDateStart] = useState(nowDate.toDate());
   const [dateEnd, setDateEnd] = useState(endDate.toDate());
   const [titleValid, setTitleValid] = useState(true);
-  const [formValues, setFormValues] = useState({
-    title: '',
-    notes: '',
-    start: nowDate.toDate(),
-    end: endDate.toDate(),
-  });
+  const [formValues, setFormValues] = useState(initEvent);
 
   const { title, notes, start, end } = formValues;
+
+  // Efecto pendiente de los cambios del formulario
+  useEffect(() => {
+    if (activeEvent) {
+      setFormValues(activeEvent);
+    } else {
+      setFormValues(initEvent);
+    }
+  }, [activeEvent]);
 
   const handleInputChange = ({ target }) => {
     setFormValues({
@@ -48,7 +67,11 @@ const CalendarModal = () => {
   };
 
   // Cerrar el modal haciendo click fuera de él
-  const closeModal = () => dispatch(uiCloseModal());
+  const closeModal = () => {
+    dispatch(uiCloseModal());
+    setFormValues(initEvent); // Se realiza limpieza del evento activo
+    dispatch(eventClearActive());
+  };
 
   const startDateChange = (e) => {
     setDateStart(e);
@@ -80,7 +103,24 @@ const CalendarModal = () => {
         icon: 'error',
       });
 
-    if (title.length < 2) return setTitleValid(false);
+    if (title.trim().length < 2) return setTitleValid(false);
+
+    // Si existe el activeEvent se está actualizando
+    // de los contrario se creará un nuevo evento
+    if (activeEvent) {
+      dispatch(eventUpdated(formValues));
+    } else {
+      dispatch(
+        eventAddNew({
+          ...formValues,
+          id: new Date().getTime(),
+          user: {
+            _id: '123',
+            name: 'Belu',
+          },
+        })
+      );
+    }
 
     setTitleValid(true);
     closeModal();
@@ -96,7 +136,7 @@ const CalendarModal = () => {
       className="modal"
       overlayClassName="modal-fondo"
     >
-      <h1>Nuevo evento</h1>
+      <h1>{!activeEvent ? 'Nuevo evento' : 'Editar evento'}</h1>
       <hr />
       <form onSubmit={handleSubmit} className="container">
         <div className="form-group">
@@ -150,9 +190,9 @@ const CalendarModal = () => {
           </small>
         </div>
 
-        <button type="submit" className="btn btn-outline-primary btn-block">
-          <i className="far fa-save"></i>
-          <span> Guardar</span>
+        <button type="submit" className="btn btn-info btn-block">
+          <i className="fas fa-save mr-2"></i>
+          <span>Guardar</span>
         </button>
       </form>
     </Modal>

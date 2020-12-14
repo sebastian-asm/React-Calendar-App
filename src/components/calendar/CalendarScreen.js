@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
@@ -8,29 +8,19 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { messages } from '../helpers/calendar-messages-es';
 import { uiOpenModal } from '../../actions/ui';
+import { eventClearActive, eventSetActive } from '../../actions/events';
 import Navbar from '../ui/Navbar';
 import CalendarEvent from './CalendarEvent';
 import CalendarModal from './CalendarModal';
+import AddNewEvent from '../ui/AddNewEvent';
+import DeleteEvent from '../ui/DeleteEvent';
 
 moment.locale('es'); // moment en español
 const localizer = momentLocalizer(moment);
 
-const events = [
-  {
-    title: 'Personal',
-    start: moment().toDate(),
-    end: moment().add(2, 'hours').toDate(),
-    bgcolor: '#fafafa',
-    notes: 'Mensaje de prueba',
-    user: {
-      _id: '1',
-      name: 'Sebas',
-    },
-  },
-];
-
 const CalendarScreen = () => {
   const dispatch = useDispatch();
+  const { events, activeEvent } = useSelector((state) => state.calendar);
 
   // Recuperando la última vista visitada, si no existe muestra el mes por defecto
   const [lastView, setLastView] = useState(
@@ -38,11 +28,10 @@ const CalendarScreen = () => {
   );
 
   // Abrir el modal con doble click
-  const onDoubleClickEvent = (e) => dispatch(uiOpenModal());
+  const onDoubleClickEvent = () => dispatch(uiOpenModal());
 
-  const onSelectEvent = (e) => {
-    console.log(e);
-  };
+  // Activar el evento del calendario
+  const onSelectEvent = (event) => dispatch(eventSetActive(event));
 
   // Guardar en localStorage la última vista del calendario visitada
   const onView = (e) => {
@@ -64,6 +53,9 @@ const CalendarScreen = () => {
     };
   };
 
+  // Haciendo click fuera del evento seleccionado, se limpiará
+  const onSelectSlot = () => dispatch(eventClearActive());
+
   return (
     <div className="calendar-screen">
       <Navbar />
@@ -78,9 +70,16 @@ const CalendarScreen = () => {
         components={{ event: CalendarEvent }}
         onDoubleClickEvent={onDoubleClickEvent}
         onSelectEvent={onSelectEvent}
+        onSelectSlot={onSelectSlot}
+        selectable={true}
         onView={onView}
         view={lastView}
       />
+
+      <AddNewEvent />
+
+      {/* Si existe un evento activo se muestra el botón de eliminar */}
+      {activeEvent && <DeleteEvent />}
 
       <CalendarModal />
     </div>

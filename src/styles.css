@@ -18,6 +18,27 @@ textarea {
   resize: none;
 }
 
+/* Botones flotantes */
+.fab {
+  border-radius: 50px;
+  bottom: 25px;
+  font-size: 20px;
+  padding: 20px;
+  position: fixed;
+  height: 60px;
+  right: 25px;
+}
+
+.fab-trash {
+  border-radius: 50px;
+  bottom: 25px;
+  font-size: 16px;
+  padding: 20px;
+  position: fixed;
+  height: 60px;
+  left: 25px;
+}
+
 /* Modal */
 .ReactModalPortal > div {
   opacity: 0;

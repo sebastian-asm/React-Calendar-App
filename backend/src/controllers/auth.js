@@ -36,7 +36,7 @@ export const createUser = async (req = request, res = response) => {
   } catch (error) {
     res.status(500).json({
       ok: false,
-      message: 'Hubo un error en el servidor',
+      message: 'Hubo un error en la petición',
       error,
     });
   }
@@ -73,7 +73,7 @@ export const loginUser = async (req = request, res = response) => {
   } catch (error) {
     res.status(500).json({
       ok: false,
-      message: 'Hubo un error en el servidor',
+      message: 'Hubo un error en la petición',
       error,
     });
   }

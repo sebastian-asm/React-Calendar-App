@@ -6,6 +6,7 @@ const dbConnection = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: false,
     });
     console.log('Conexión exitosa a la base de datos');
   } catch (error) {

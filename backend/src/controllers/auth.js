@@ -68,6 +68,10 @@ export const loginUser = async (req = request, res = response) => {
     res.json({
       ok: true,
       message: 'Login correcto',
+      user: {
+        uid: user._id,
+        name: user.name,
+      },
       token,
     });
   } catch (error) {

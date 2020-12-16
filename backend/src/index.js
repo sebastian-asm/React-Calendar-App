@@ -1,4 +1,5 @@
 import express, { Router } from 'express';
+import morgan from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -15,6 +16,7 @@ const router = Router();
 dbConnection(); // Conexión a la db
 server.use(cors());
 server.use(express.json());
+server.use(morgan('dev'));
 server.use('/api', router);
 
 // Rutas

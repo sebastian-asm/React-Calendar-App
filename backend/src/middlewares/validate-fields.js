@@ -7,7 +7,8 @@ const validateFields = (req = request, res = response, next) => {
   if (!errors.isEmpty())
     return res.status(400).json({
       ok: false,
-      errors: errors.mapped(),
+      message: 'Los datos ingresados no son válidos',
+      errors: errors.array(),
     });
 
   next();

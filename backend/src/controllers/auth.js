@@ -69,7 +69,7 @@ export const loginUser = async (req = request, res = response) => {
       ok: true,
       message: 'Login correcto',
       user: {
-        uid: user._id,
+        uid: user.id,
         name: user.name,
       },
       token,
@@ -90,6 +90,10 @@ export const validatedToken = async (req = request, res = response) => {
   res.json({
     ok: true,
     messsage: 'Token regenerado exitosamente',
+    user: {
+      uid,
+      name,
+    },
     new_token: token,
   });
 };

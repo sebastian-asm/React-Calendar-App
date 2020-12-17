@@ -22,14 +22,8 @@ eventsRouter.post(
   '/',
   [
     check('title', 'El título es necesario').escape().trim().notEmpty(),
-    check('start', 'Se necesita una fecha de inicio válida')
-      .escape()
-      .trim()
-      .isDate(),
-    check('end', 'Se necesita una fecha de termino válida')
-      .escape()
-      .trim()
-      .isDate(),
+    check('start', 'Se necesita una fecha de inicio válida').escape().trim(),
+    check('end', 'Se necesita una fecha de termino válida').escape().trim(),
     validateFields,
   ],
   createEvent

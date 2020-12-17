@@ -1,21 +1,21 @@
-import moment from 'moment';
+// import moment from 'moment';
+
+// {
+//   id: new Date().getTime(),
+//   title: 'Personal',
+//   start: moment().toDate(),
+//   end: moment().add(2, 'hours').toDate(),
+//   notes: 'Mensaje de prueba',
+//   user: {
+//     _id: '1',
+//     name: 'Sebas',
+//   },
+// },
 
 import { types } from '../types/types';
 
 const initialState = {
-  events: [
-    {
-      id: new Date().getTime(),
-      title: 'Personal',
-      start: moment().toDate(),
-      end: moment().add(2, 'hours').toDate(),
-      notes: 'Mensaje de prueba',
-      user: {
-        _id: '1',
-        name: 'Sebas',
-      },
-    },
-  ],
+  events: [],
   activeEvent: null,
 };
 
@@ -54,6 +54,12 @@ const calendarReducer = (state = initialState, action) => {
           (event) => event.id !== state.activeEvent.id
         ),
         activeEvent: null,
+      };
+
+    case types.eventLoaded:
+      return {
+        ...state,
+        events: [...action.payload],
       };
 
     default:

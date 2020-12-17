@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Calendar, momentLocalizer } from 'react-big-calendar';
@@ -6,9 +6,13 @@ import moment from 'moment';
 import 'moment/locale/es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-import { messages } from '../helpers/calendar-messages-es';
+import { messages } from '../../helpers/calendar-messages-es';
 import { uiOpenModal } from '../../actions/ui';
-import { eventClearActive, eventSetActive } from '../../actions/events';
+import {
+  eventClearActive,
+  eventSetActive,
+  eventStartLoading,
+} from '../../actions/events';
 import Navbar from '../ui/Navbar';
 import CalendarEvent from './CalendarEvent';
 import CalendarModal from './CalendarModal';
@@ -21,11 +25,16 @@ const localizer = momentLocalizer(moment);
 const CalendarScreen = () => {
   const dispatch = useDispatch();
   const { events, activeEvent } = useSelector((state) => state.calendar);
+  const { uid } = useSelector((state) => state.auth);
 
   // Recuperando la última vista visitada, si no existe muestra el mes por defecto
   const [lastView, setLastView] = useState(
     localStorage.getItem('lastView') || 'month'
   );
+
+  useEffect(() => {
+    dispatch(eventStartLoading());
+  }, [dispatch]);
 
   // Abrir el modal con doble click
   const onDoubleClickEvent = () => dispatch(uiOpenModal());
@@ -41,7 +50,7 @@ const CalendarScreen = () => {
 
   const eventStyleGetter = (event, start, end, isSelected) => {
     const style = {
-      backgroundColor: '#367cf7',
+      backgroundColor: uid === event.user_id ? '#367cf7' : '#465660',
       borderRadius: 0,
       opacity: 0.8,
       display: 'block',

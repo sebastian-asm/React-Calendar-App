@@ -8,9 +8,9 @@ import Swal from 'sweetalert2';
 
 import { uiCloseModal } from '../../actions/ui';
 import {
-  eventAddNew,
   eventClearActive,
-  eventUpdated,
+  eventStartUpdate,
+  startEventAddNew,
 } from '../../actions/events';
 
 const customStyles = {
@@ -105,21 +105,14 @@ const CalendarModal = () => {
 
     if (title.trim().length < 2) return setTitleValid(false);
 
+    console.log(formValues);
+
     // Si existe el activeEvent se está actualizando
     // de los contrario se creará un nuevo evento
     if (activeEvent) {
-      dispatch(eventUpdated(formValues));
+      dispatch(eventStartUpdate(formValues));
     } else {
-      dispatch(
-        eventAddNew({
-          ...formValues,
-          id: new Date().getTime(),
-          user: {
-            _id: '123',
-            name: 'Belu',
-          },
-        })
-      );
+      dispatch(startEventAddNew(formValues));
     }
 
     setTitleValid(true);
